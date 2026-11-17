@@ -6,7 +6,10 @@ export const Route = createFileRoute("/")({
       { title: "Ontology Café" },
       { name: "description", content: "Card sorting & 20 questions for our coffee ontology" },
       { property: "og:title", content: "Ontology Café" },
-      { property: "og:description", content: "Card sorting & 20 questions for our coffee ontology" },
+      {
+        property: "og:description",
+        content: "Card sorting & 20 questions for our coffee ontology",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
