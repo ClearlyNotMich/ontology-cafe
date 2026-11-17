@@ -15,6 +15,13 @@
       "when": 1794927416987,
       "tag": "0001_ontology_cafe_grants",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1794936037328,
+      "tag": "0002_rooms_add_topic_scope",
+      "breakpoints": true
     }
   ]
 }

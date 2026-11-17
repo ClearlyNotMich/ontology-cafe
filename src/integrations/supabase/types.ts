@@ -246,6 +246,8 @@ export type Database = {
           cs_phase: string
           host_id: string | null
           id: string
+          scope: string
+          topic: string
         }
         Insert: {
           code: string
@@ -253,6 +255,8 @@ export type Database = {
           cs_phase?: string
           host_id?: string | null
           id?: string
+          scope?: string
+          topic?: string
         }
         Update: {
           code?: string
@@ -260,6 +264,8 @@ export type Database = {
           cs_phase?: string
           host_id?: string | null
           id?: string
+          scope?: string
+          topic?: string
         }
         Relationships: []
       }
