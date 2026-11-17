@@ -56,6 +56,10 @@ _beans_). Rooms work for any domain: animals, law, music, hospital logistics, wh
 
 7. **Export.** Both tabs have an **Export** menu: download Markdown or JSON, or copy the
    Markdown. Export at any time. The file always reflects the live state.
+8. **Reuse a session.** **Import from export** (next to the card input, in Write and Sort) loads
+   an earlier `.json` or `.md` export (card sorting or 20 Questions) or a plain `.txt` list as new
+   cards: you pick the terms in a preview, terms already in the room are skipped. Only cards are
+   imported, not piles or links.
 
 <img src="docs/screenshots/phone.png" alt="The same room on a phone" width="300">
 
