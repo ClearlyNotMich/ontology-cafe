@@ -1,4 +1,4 @@
-/** A few seconds of canvas confetti in coffee colours; no dependency needed. */
+/** A few seconds of canvas confetti in café colours; no dependency needed. */
 export function fireConfetti() {
   const canvas = document.createElement("canvas");
   canvas.className = "pointer-events-none fixed inset-0 z-[100]";

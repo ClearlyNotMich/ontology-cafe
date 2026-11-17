@@ -108,7 +108,7 @@ export function suggestTag(question: string): Tag | null {
   return null;
 }
 
-/** "Does it contain milk?" -> "milk", "Is it a drink?" -> "drink". */
+/** "Does it have fins?" -> "fins", "Is it a fish?" -> "fish". */
 export function termFromQuestion(question: string): string {
   return question
     .trim()

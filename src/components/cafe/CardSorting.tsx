@@ -144,7 +144,7 @@ function WritePhase({ resetActions }: { resetActions: React.ReactNode }) {
       </SectionTitle>
       <HowToPlay
         lines={[
-          "Type coffee terms, one per card (Enter adds it). Paste a list to add many at once.",
+          "Type terms for your ontology, one per card (Enter adds it). Paste a list to add many at once.",
           "Nobody sees your cards yet, only how many you wrote.",
           "Press Confirm when you're done; cards flip open once everyone has confirmed.",
         ]}
@@ -163,7 +163,7 @@ function WritePhase({ resetActions }: { resetActions: React.ReactNode }) {
             <Input
               aria-label="New card"
               placeholder={
-                me.confirmed ? "Un-confirm to keep writing" : "e.g. oat milk, V60, washed…"
+                me.confirmed ? "Un-confirm to keep writing" : "e.g. Shark, Pet, has fins…"
               }
               value={text}
               maxLength={MAX_CARD_TEXT}
@@ -190,7 +190,7 @@ function WritePhase({ resetActions }: { resetActions: React.ReactNode }) {
             <div className="space-y-2">
               <Textarea
                 aria-label="Paste terms, one per line"
-                placeholder={"One term per line\nlatte\ncappuccino\nflat white"}
+                placeholder={"One term per line\nShark\nGoldfish\nPet"}
                 rows={5}
                 value={paste}
                 onChange={(e) => setPaste(e.target.value)}

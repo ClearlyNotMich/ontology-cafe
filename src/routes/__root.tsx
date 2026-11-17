@@ -80,11 +80,14 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Ontology Café" },
-      { name: "description", content: "Card sorting & 20 questions for our coffee ontology" },
+      {
+        name: "description",
+        content: "Card sorting & 20 questions for building any ontology together",
+      },
       { property: "og:title", content: "Ontology Café" },
       {
         property: "og:description",
-        content: "Card sorting & 20 questions for our coffee ontology",
+        content: "Card sorting & 20 questions for building any ontology together",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },

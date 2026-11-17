@@ -73,7 +73,7 @@
 }
 
 :root {
-  /* Coffee theme: cream paper, espresso text, caramel accents. */
+  /* Café theme: cream paper, dark-roast text, caramel accents. */
   --radius: 0.75rem;
   --background: oklch(0.97 0.018 80);
   --foreground: oklch(0.27 0.04 50);

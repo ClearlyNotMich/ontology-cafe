@@ -75,7 +75,7 @@ const COLOR_DOTS: Record<string, string> = {
   lime: "bg-lime-400",
   stone: "bg-stone-400",
 };
-const LINK_LABELS = ["is a", "has ingredient", "made with", "has flavour", "part of", "related to"];
+const LINK_LABELS = ["is a", "has part", "part of", "has property", "related to"];
 
 // Prefer the innermost target under the pointer: piles sit inside the droppable board.
 const collision: CollisionDetection = (args) => {
@@ -250,7 +250,7 @@ export function SortBoard({
         lines={[
           "Drag cards into piles (long-press on phones), or tap a card and pick “Move to”. Drop on empty board space to start a new pile.",
           "Name each pile (a new concept!) and say why its cards belong together.",
-          "Link piles with a label like “is a” or “has ingredient”, and give a reason.",
+          "Link piles with a label like “is a” or “part of”, and give a reason.",
         ]}
       />
       <div className="flex flex-wrap items-center gap-4 text-sm">
@@ -683,7 +683,7 @@ function CardDialog({
             <Label htmlFor="card-note">Note</Label>
             <Textarea
               id="card-note"
-              placeholder="e.g. only if made with plant milk"
+              placeholder="e.g. only if kept as a pet"
               value={note}
               maxLength={500}
               onChange={(e) => setNote(e.target.value)}
@@ -770,7 +770,7 @@ function LinkDialog({
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Link two piles</DialogTitle>
-          <DialogDescription>Read it as a sentence: “Latte is a Milk drink”.</DialogDescription>
+          <DialogDescription>Read it as a sentence: “Shark is a Fish”.</DialogDescription>
         </DialogHeader>
         {piles.length < 2 ? (
           <p className="text-sm">Make at least two piles first.</p>

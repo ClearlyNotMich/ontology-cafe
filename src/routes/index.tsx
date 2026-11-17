@@ -13,11 +13,14 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Ontology Café" },
-      { name: "description", content: "Card sorting & 20 questions for our coffee ontology" },
+      {
+        name: "description",
+        content: "Card sorting & 20 questions for building any ontology together",
+      },
       { property: "og:title", content: "Ontology Café" },
       {
         property: "og:description",
-        content: "Card sorting & 20 questions for our coffee ontology",
+        content: "Card sorting & 20 questions for building any ontology together",
       },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -85,7 +88,7 @@ function Index() {
         <Coffee className="mx-auto size-14 text-primary" />
         <h1 className="text-5xl font-semibold tracking-tight">Ontology Café</h1>
         <p className="text-lg text-muted-foreground">
-          Card sorting &amp; 20 questions for our coffee ontology
+          Card sorting &amp; 20 questions for building any ontology together
         </p>
       </div>
       <form

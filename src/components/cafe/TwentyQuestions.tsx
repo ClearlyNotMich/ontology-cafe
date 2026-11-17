@@ -148,7 +148,7 @@ export function TwentyQuestions() {
           </>
         }
       >
-        Coffee Detective (20 Questions)
+        Café Detective (20 Questions)
       </SectionTitle>
       <HowToPlay
         lines={[
@@ -400,7 +400,7 @@ function DetectiveInputs({
       >
         <Input
           aria-label="Your question"
-          placeholder="Is it a drink?"
+          placeholder="Is it an animal?"
           value={question}
           maxLength={199}
           onChange={(e) => setQuestion(e.target.value)}
@@ -421,7 +421,7 @@ function DetectiveInputs({
       >
         <Input
           aria-label="Your guess"
-          placeholder="Guess: latte"
+          placeholder="Guess: shark"
           value={guess}
           maxLength={120}
           onChange={(e) => setGuess(e.target.value)}
