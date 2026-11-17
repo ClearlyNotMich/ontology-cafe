@@ -1,4 +1,13 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { Coffee, Loader2 } from "lucide-react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { supabase } from "@/integrations/supabase/client";
+import { getSavedName, savePlayerId, saveName, uuid } from "@/lib/cafe/identity";
+import { PLAYER_COLORS, generateRoomCode } from "@/lib/cafe/logic";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -17,13 +26,100 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
+async function createRoom(name: string): Promise<string> {
+  const playerId = uuid();
+  for (let attempt = 0; attempt < 5; attempt++) {
+    const code = generateRoomCode();
+    const { data: room, error } = await supabase
+      .from("rooms")
+      .insert({ code, host_id: playerId })
+      .select()
+      .single();
+    if (error?.code === "23505") continue; // code already taken
+    if (error || !room) throw error ?? new Error("No room returned");
+    const { error: playerError } = await supabase
+      .from("players")
+      .insert({ id: playerId, room_id: room.id, name, color: PLAYER_COLORS[0]! });
+    if (playerError) throw playerError;
+    savePlayerId(room.id, playerId);
+    return code;
+  }
+  throw new Error("Couldn't find a free room code");
+}
+
 function Index() {
+  const navigate = useNavigate();
+  const [name, setName] = useState("");
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  useEffect(() => setName(getSavedName()), []);
+
+  const create = async () => {
+    const trimmed = name.trim().slice(0, 40);
+    if (!trimmed) {
+      toast.error("Pick a display name first");
+      return;
+    }
+    setBusy(true);
+    try {
+      saveName(trimmed);
+      const roomCode = await createRoom(trimmed);
+      await navigate({ to: "/room/$code", params: { code: roomCode } });
+    } catch (e) {
+      console.error(e);
+      toast.error("Couldn't create the room. Try again?");
+      setBusy(false);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center gap-3 bg-background px-6 text-center">
-      <h1 className="text-5xl font-semibold tracking-tight text-foreground">Ontology Café</h1>
-      <p className="text-lg text-muted-foreground">
-        Card sorting &amp; 20 questions for our coffee ontology
-      </p>
+    <main className="flex min-h-screen flex-col items-center justify-center gap-8 px-6 py-12 text-center">
+      <div className="space-y-3">
+        <Coffee className="mx-auto size-14 text-primary" />
+        <h1 className="text-5xl font-semibold tracking-tight">Ontology Café</h1>
+        <p className="text-lg text-muted-foreground">
+          Card sorting &amp; 20 questions for our coffee ontology
+        </p>
+      </div>
+      <form
+        className="w-full max-w-sm space-y-3 rounded-2xl border bg-card p-6 shadow-sm"
+        onSubmit={(e) => {
+          e.preventDefault();
+          void create();
+        }}
+      >
+        <Input
+          aria-label="Your display name"
+          placeholder="Your display name"
+          value={name}
+          maxLength={40}
+          onChange={(e) => setName(e.target.value)}
+          className="h-11 text-base"
+        />
+        <Button type="submit" size="lg" className="h-11 w-full text-base" disabled={busy}>
+          {busy ? <Loader2 className="animate-spin" /> : <Coffee />} Create room
+        </Button>
+      </form>
+      <form
+        className="flex w-full max-w-sm gap-2"
+        onSubmit={(e) => {
+          e.preventDefault();
+          const c = code.trim().toUpperCase();
+          if (c) void navigate({ to: "/room/$code", params: { code: c } });
+        }}
+      >
+        <Input
+          aria-label="Room code"
+          placeholder="Got a code? e.g. K7QF2"
+          value={code}
+          maxLength={8}
+          onChange={(e) => setCode(e.target.value)}
+          className="h-11 text-base uppercase"
+        />
+        <Button type="submit" variant="outline" className="h-11">
+          Join
+        </Button>
+      </form>
     </main>
   );
 }
