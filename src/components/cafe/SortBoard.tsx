@@ -24,7 +24,7 @@ import {
   Trash2,
   X,
 } from "lucide-react";
-import { useLayoutEffect, useRef, useState, type ReactNode, type RefObject } from "react";
+import { useLayoutEffect, useRef, useState, type ReactNode } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -178,7 +178,6 @@ export function SortBoard({
     null,
   );
   const [newCard, setNewCard] = useState("");
-  const boardRef = useRef<HTMLDivElement>(null);
   const sensors = useSensors(
     useSensor(MouseSensor, { activationConstraint: { distance: 6 } }),
     // Long-press to drag on touch, so swiping still scrolls the page.
@@ -316,8 +315,8 @@ export function SortBoard({
             </div>
           </Tray>
 
-          <BoardArea boardRef={boardRef}>
-            {showLines && <LinkLines containerRef={boardRef} watch={[cards, piles, links]} />}
+          <BoardArea>
+            {showLines && <LinkLines />}
             <div className="relative z-10 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
               {sortedPiles.map((pile) => (
                 <PileView
@@ -392,20 +391,11 @@ function Tray({
   );
 }
 
-function BoardArea({
-  boardRef,
-  children,
-}: {
-  boardRef: RefObject<HTMLDivElement | null>;
-  children: ReactNode;
-}) {
+function BoardArea({ children }: { children: ReactNode }) {
   const { setNodeRef, isOver } = useDroppable({ id: "board" });
   return (
     <div
-      ref={(n) => {
-        setNodeRef(n);
-        boardRef.current = n;
-      }}
+      ref={setNodeRef}
       data-testid="board"
       className={`relative min-h-80 rounded-xl border bg-[repeating-linear-gradient(45deg,transparent,transparent_12px,oklch(0.93_0.02_75/.5)_12px,oklch(0.93_0.02_75/.5)_24px)] p-3 pb-16 transition-colors ${isOver ? "ring-2 ring-primary" : ""}`}
     >
@@ -915,17 +905,13 @@ function ActivityLog() {
 type Line = { id: string; x1: number; y1: number; x2: number; y2: number; label: string };
 
 /** Draws links as lines between pile headers, re-measured whenever the board changes size. */
-function LinkLines({
-  containerRef,
-  watch,
-}: {
-  containerRef: RefObject<HTMLDivElement | null>;
-  watch: unknown[];
-}) {
-  const { links } = useCafe();
+function LinkLines() {
+  const { links, cards, piles } = useCafe();
   const [lines, setLines] = useState<Line[]>([]);
+  // Measure from our own svg: a parent's callback ref isn't attached yet when this effect runs.
+  const svgRef = useRef<SVGSVGElement>(null);
   useLayoutEffect(() => {
-    const el = containerRef.current;
+    const el = svgRef.current?.parentElement;
     if (!el) return;
     const measure = () => {
       const base = el.getBoundingClientRect();
@@ -946,10 +932,10 @@ function LinkLines({
     observer.observe(el);
     el.querySelectorAll("[data-pile-id]").forEach((n) => observer.observe(n));
     return () => observer.disconnect();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [links, containerRef, ...watch]);
+  }, [links, cards, piles]);
   return (
     <svg
+      ref={svgRef}
       className="pointer-events-none absolute inset-0 z-20 size-full overflow-visible"
       aria-hidden
     >
