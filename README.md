@@ -9,8 +9,7 @@
 ## Why
 
 Before you open an ontology editor, a team has to agree on its terms, its classes and how they
-relate. The Knowledge Representation course (lecture 4, on building ontologies) gives two simple
-ways to get that knowledge out of people's heads:
+relate. The Knowledge Representation course gives two simple ways to get that knowledge out of people's heads:
 
 - **Card sorting.** Everyone writes the terms of the domain on cards. The group then sorts the
   cards into piles. Each pile gets a name, often a concept nobody wrote down. Then you link the
