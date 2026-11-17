@@ -128,6 +128,8 @@ function WritePhase({ resetActions }: { resetActions: React.ReactNode }) {
               build={() =>
                 buildCardSortExport({
                   roomCode: room.code,
+                  topic: room.topic,
+                  scope: room.scope,
                   exportedAt: new Date().toISOString(),
                   players,
                   cards: mine,
@@ -144,7 +146,7 @@ function WritePhase({ resetActions }: { resetActions: React.ReactNode }) {
       </SectionTitle>
       <HowToPlay
         lines={[
-          "Type terms for your ontology, one per card (Enter adds it). Paste a list to add many at once.",
+          `Write terms for ${room.topic || "your ontology"}, one per card (Enter adds it). Paste a list to add many at once.`,
           "Nobody sees your cards yet, only how many you wrote.",
           "Press Confirm when you're done; cards flip open once everyone has confirmed.",
         ]}

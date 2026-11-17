@@ -109,6 +109,7 @@ function JoinCard({ room, onJoined }: { room: Room; onJoined: (player: Player) =
     <Centered>
       <Coffee className="size-12 text-primary" />
       <h1 className="text-3xl font-semibold">Join room {room.code}</h1>
+      {room.topic && <p className="text-lg text-muted-foreground">Topic: {room.topic}</p>}
       <form
         className="flex w-full max-w-sm flex-col gap-3"
         onSubmit={(e) => {
@@ -137,9 +138,16 @@ function RoomShell() {
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl flex-col gap-4 px-3 py-4 sm:px-6">
       <header className="flex flex-wrap items-center justify-between gap-3">
-        <Link to="/" className="flex items-center gap-2 text-2xl font-semibold">
-          <Coffee className="size-7 text-primary" /> Ontology Café
-        </Link>
+        <div className="flex flex-wrap items-baseline gap-x-3">
+          <Link to="/" className="flex items-center gap-2 text-2xl font-semibold">
+            <Coffee className="size-7 text-primary" /> Ontology Café
+          </Link>
+          {room.topic && (
+            <p className="text-lg text-muted-foreground" data-testid="room-topic">
+              Topic: <strong className="text-foreground">{room.topic}</strong>
+            </p>
+          )}
+        </div>
         <Button
           variant="secondary"
           onClick={() => {

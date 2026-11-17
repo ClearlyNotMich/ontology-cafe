@@ -11,8 +11,18 @@ import type { Card, Link, Pile, Player, Question, Round } from "./types";
 
 export type ExportFile = { markdown: string; json: unknown; filename: string };
 
-type CardSortInput = {
-  roomCode: string;
+type RoomInfo = { roomCode: string; topic: string; scope: string; exportedAt: string };
+
+/** Title, then the room's topic and scope so every export says what ontology it is about. */
+function header(title: string, { roomCode, topic, scope, exportedAt }: RoomInfo): string[] {
+  const md = [`# Ontology Café: ${title} (room ${roomCode})`, ""];
+  if (topic) md.push(`**Topic:** ${topic}`, "");
+  if (scope) md.push("## Scope & goal", "", scope, "");
+  md.push(`_Exported ${exportedAt}_`, "");
+  return md;
+}
+
+type CardSortInput = RoomInfo & {
   exportedAt: string;
   players: Player[];
   cards: Card[];
@@ -21,13 +31,13 @@ type CardSortInput = {
 };
 
 export function buildCardSortExport({
-  roomCode,
-  exportedAt,
   players,
   cards,
   piles,
   links,
+  ...info
 }: CardSortInput): ExportFile {
+  const { roomCode, exportedAt, topic, scope } = info;
   const name = (id: string | null) => players.find((p) => p.id === id)?.name ?? "unknown";
   const cardJson = (c: Card) => ({
     text: c.text,
@@ -41,6 +51,8 @@ export function buildCardSortExport({
 
   const json = {
     room: roomCode,
+    topic,
+    scope,
     exportedAt,
     piles: sortedPiles.map((p) => ({
       name: p.name,
@@ -61,12 +73,7 @@ export function buildCardSortExport({
 
   const cardLine = (c: ReturnType<typeof cardJson>) =>
     `- ${c.text}${c.note ? ` _(note: ${c.note.replace(/\n/g, "; ")})_` : ""}`;
-  const md = [
-    `# Ontology Café: card sorting (room ${roomCode})`,
-    "",
-    `_Exported ${exportedAt}_`,
-    "",
-  ];
+  const md = header("card sorting", info);
   md.push("## Piles", "");
   if (!json.piles.length) md.push("_No piles yet._", "");
   for (const p of json.piles) {
@@ -95,8 +102,7 @@ export function buildCardSortExport({
   return { markdown: md.join("\n"), json, filename: `ontology-cafe-${roomCode}-card-sorting` };
 }
 
-type TqInput = {
-  roomCode: string;
+type TqInput = RoomInfo & {
   exportedAt: string;
   players: Player[];
   rounds: Round[];
@@ -104,14 +110,8 @@ type TqInput = {
   cards: Card[];
 };
 
-export function buildTqExport({
-  roomCode,
-  exportedAt,
-  players,
-  rounds,
-  questions,
-  cards,
-}: TqInput): ExportFile {
+export function buildTqExport({ players, rounds, questions, cards, ...info }: TqInput): ExportFile {
+  const { roomCode, exportedAt, topic, scope } = info;
   const name = (id: string | null) => players.find((p) => p.id === id)?.name ?? null;
   const ordered = [...rounds].sort((a, b) => a.number - b.number);
   const tree = mergeTree(ordered, questions);
@@ -121,6 +121,8 @@ export function buildTqExport({
 
   const json = {
     room: roomCode,
+    topic,
+    scope,
     exportedAt,
     rounds: ordered.map((r) => ({
       number: r.number,
@@ -144,12 +146,7 @@ export function buildTqExport({
     suggestedTerms,
   };
 
-  const md = [
-    `# Ontology Café: 20 Questions (room ${roomCode})`,
-    "",
-    `_Exported ${exportedAt}_`,
-    "",
-  ];
+  const md = header("20 Questions", info);
   md.push("## Rounds", "");
   if (!json.rounds.length) md.push("_No rounds yet._", "");
   for (const r of json.rounds) {

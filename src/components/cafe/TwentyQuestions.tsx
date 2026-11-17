@@ -129,6 +129,8 @@ export function TwentyQuestions() {
               build={() =>
                 buildTqExport({
                   roomCode: room.code,
+                  topic: room.topic,
+                  scope: room.scope,
                   exportedAt: new Date().toISOString(),
                   players,
                   rounds: tq_rounds,

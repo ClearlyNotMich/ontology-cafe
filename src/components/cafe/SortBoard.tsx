@@ -232,6 +232,8 @@ export function SortBoard({
               build={() =>
                 buildCardSortExport({
                   roomCode: room.code,
+                  topic: room.topic,
+                  scope: room.scope,
                   exportedAt: new Date().toISOString(),
                   players,
                   cards,

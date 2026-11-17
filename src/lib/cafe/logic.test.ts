@@ -216,13 +216,19 @@ describe("exports", () => {
     ];
     const out = buildCardSortExport({
       roomCode: "ABCDE",
+      topic: "Animals",
+      scope: "Animals people meet.\nOut of scope: microbes.",
       exportedAt: "now",
       players,
       cards,
       piles: [pets, fish],
       links,
     });
+    expect(out.markdown).toContain(
+      "**Topic:** Animals\n\n## Scope & goal\n\nAnimals people meet.\nOut of scope: microbes.",
+    );
     expect(out.json).toMatchObject({
+      topic: "Animals",
       piles: [
         { name: "Fish", newConcept: true, cards: [{ text: "Shark", authors: ["Anna", "Sam"] }] },
         { name: "Pets", cards: [{ text: "Goldfish", note: "kept in a bowl" }] },
@@ -253,12 +259,16 @@ describe("exports", () => {
     const cards = [card({ text: "fish", note: `${TQ_NOTE_PREFIX} Is it a fish?` })];
     const out = buildTqExport({
       roomCode: "ABCDE",
+      topic: "",
+      scope: "",
       exportedAt: "now",
       players,
       rounds: [r1],
       questions: qs,
       cards,
     });
+    expect(out.markdown).not.toContain("Topic");
+    expect(out.markdown).not.toContain("Scope & goal");
     expect(out.markdown).toContain("### Round 1: Shark");
     expect(out.markdown).toContain("Barista: Anna. Result: guessed by Sam.");
     expect(out.markdown).toContain("1. Is it a fish? → yes [class]");

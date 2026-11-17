@@ -1,4 +1,4 @@
-import { ChevronDown, Copy, Download, FileJson, FileText, RotateCcw } from "lucide-react";
+import { ChevronDown, Copy, Download, FileJson, FileText, Pencil, RotateCcw } from "lucide-react";
 import { useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
@@ -21,7 +21,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { supabase } from "@/integrations/supabase/client";
 import type { ExportFile } from "@/lib/cafe/export";
+import { MAX_SCOPE, MAX_TOPIC } from "@/lib/cafe/logic";
+import { useCafe } from "@/lib/cafe/room-store";
 
 function download(name: string, content: string, type: string) {
   const url = URL.createObjectURL(new Blob([content], { type }));
@@ -113,30 +118,77 @@ export function ConfirmButton({
   );
 }
 
+/** The room's scope & goal; the host can edit topic and scope, everyone sees changes live. */
 export function OntologyPanel() {
+  const cafe = useCafe();
+  const { room, isHost } = cafe;
   const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<{ topic: string; scope: string } | null>(null);
+  if (!room.scope && !isHost) return null;
+
+  const save = () => {
+    if (!draft) return;
+    const patch = { topic: draft.topic.trim(), scope: draft.scope.trim() };
+    cafe.setRoom({ ...room, ...patch });
+    setDraft(null);
+    void cafe
+      .write(supabase.from("rooms").update(patch).eq("id", room.id))
+      .then((ok) => ok && cafe.log("updated the topic and scope"));
+  };
+
   return (
     <Collapsible open={open} onOpenChange={setOpen} className="rounded-xl border bg-card">
       <CollapsibleTrigger className="flex w-full items-center justify-between px-4 py-2 text-left font-medium">
-        ☕ Our ontology: scope and goal
+        {room.scope ? "Scope & goal" : "Add a topic and scope & goal (host)"}
         <ChevronDown className={`size-4 transition-transform ${open ? "rotate-180" : ""}`} />
       </CollapsibleTrigger>
       <CollapsibleContent className="space-y-2 px-4 pb-3 text-sm leading-relaxed">
-        <p>
-          <strong>Scope:</strong> a knowledge base for coffee enthusiasts and home baristas. It
-          recommends coffees, brewing methods and drinks from a user's flavour, roast level or
-          dietary needs (e.g. vegan). It covers manual brewing methods (pour-over, French press,
-          AeroPress, espresso), the drinks made with them (latte, cappuccino, ...), their
-          ingredients, roast levels, flavour profiles, origin regions and processing methods
-          (washed, natural). Focus: specialty coffee. Out of scope: pads and capsules (Senseo,
-          Nespresso), farming and harvesting, coffee chains and franchises.
-        </p>
-        <p>
-          <strong>Goal:</strong> help users choose a coffee, roast level and brewing method that
-          match their flavour and dietary preferences, explain what goes into each drink, and infer
-          unstated properties (e.g. which drinks are vegan, which coffees likely taste fruity given
-          origin, processing and roast).
-        </p>
+        {draft ? (
+          <form
+            className="space-y-2"
+            onSubmit={(e) => {
+              e.preventDefault();
+              save();
+            }}
+          >
+            <Input
+              aria-label="Ontology topic"
+              placeholder="Ontology topic, e.g. Animals"
+              value={draft.topic}
+              maxLength={MAX_TOPIC}
+              onChange={(e) => setDraft({ ...draft, topic: e.target.value })}
+            />
+            <Textarea
+              aria-label="Scope & goal"
+              placeholder="What is in and out of scope, and what should the ontology help with?"
+              rows={5}
+              value={draft.scope}
+              maxLength={MAX_SCOPE}
+              onChange={(e) => setDraft({ ...draft, scope: e.target.value })}
+            />
+            <div className="flex gap-2">
+              <Button type="submit" size="sm">
+                Save
+              </Button>
+              <Button type="button" size="sm" variant="ghost" onClick={() => setDraft(null)}>
+                Cancel
+              </Button>
+            </div>
+          </form>
+        ) : (
+          <>
+            {room.scope && <p className="whitespace-pre-wrap">{room.scope}</p>}
+            {isHost && (
+              <Button
+                size="sm"
+                variant="outline"
+                onClick={() => setDraft({ topic: room.topic, scope: room.scope })}
+              >
+                <Pencil /> Edit topic and scope
+              </Button>
+            )}
+          </>
+        )}
       </CollapsibleContent>
     </Collapsible>
   );

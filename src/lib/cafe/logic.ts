@@ -1,6 +1,9 @@
 import type { Card, Pile, Player, Question, Round, Tag } from "./types";
 
 export const TOTAL_BEANS = 20;
+// Match the rooms.topic / rooms.scope check constraints.
+export const MAX_TOPIC = 120;
+export const MAX_SCOPE = 4000;
 export const STUMP_POINTS = 10;
 export const MAX_CARD_TEXT = 120;
 /** Cards created from a 20 Questions question carry this note prefix, so exports can find them. */

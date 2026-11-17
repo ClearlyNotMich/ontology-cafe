@@ -5,9 +5,10 @@ import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { getSavedName, savePlayerId, saveName, uuid } from "@/lib/cafe/identity";
-import { PLAYER_COLORS, generateRoomCode } from "@/lib/cafe/logic";
+import { MAX_SCOPE, MAX_TOPIC, PLAYER_COLORS, generateRoomCode } from "@/lib/cafe/logic";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -29,13 +30,13 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-async function createRoom(name: string): Promise<string> {
+async function createRoom(name: string, topic: string, scope: string): Promise<string> {
   const playerId = uuid();
   for (let attempt = 0; attempt < 5; attempt++) {
     const code = generateRoomCode();
     const { data: room, error } = await supabase
       .from("rooms")
-      .insert({ code, host_id: playerId })
+      .insert({ code, host_id: playerId, topic, scope })
       .select()
       .single();
     if (error?.code === "23505") continue; // code already taken
@@ -54,13 +55,19 @@ function Index() {
   const navigate = useNavigate();
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
+  const [topic, setTopic] = useState("");
+  const [scope, setScope] = useState("");
   const [busy, setBusy] = useState(false);
   // Buttons stay disabled until hydrated; before that a submit would be a plain page reload.
   const [hydrated, setHydrated] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
+  const topicRef = useRef<HTMLInputElement>(null);
+  const scopeRef = useRef<HTMLTextAreaElement>(null);
   useEffect(() => {
     // Keep anything typed before hydration instead of wiping it.
     setName(nameRef.current?.value || getSavedName());
+    setTopic(topicRef.current?.value ?? "");
+    setScope(scopeRef.current?.value ?? "");
     setHydrated(true);
   }, []);
 
@@ -73,7 +80,7 @@ function Index() {
     setBusy(true);
     try {
       saveName(trimmed);
-      const roomCode = await createRoom(trimmed);
+      const roomCode = await createRoom(trimmed, topic.trim(), scope.trim());
       await navigate({ to: "/room/$code", params: { code: roomCode } });
     } catch (e) {
       console.error(e);
@@ -106,6 +113,25 @@ function Index() {
           maxLength={40}
           onChange={(e) => setName(e.target.value)}
           className="h-11 text-base"
+        />
+        <Input
+          ref={topicRef}
+          aria-label="Ontology topic (optional)"
+          placeholder="Ontology topic (optional), e.g. Animals"
+          value={topic}
+          maxLength={MAX_TOPIC}
+          onChange={(e) => setTopic(e.target.value)}
+          className="h-11 text-base"
+        />
+        <Textarea
+          ref={scopeRef}
+          aria-label="Scope & goal (optional)"
+          placeholder="Scope & goal (optional): what's in, what's out, what it's for"
+          value={scope}
+          maxLength={MAX_SCOPE}
+          rows={3}
+          onChange={(e) => setScope(e.target.value)}
+          className="text-base"
         />
         <Button
           type="submit"
