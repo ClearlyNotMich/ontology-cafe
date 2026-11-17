@@ -47,12 +47,12 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { addCards } from "@/lib/cafe/cards";
 import { buildCardSortExport } from "@/lib/cafe/export";
 import { uuid } from "@/lib/cafe/identity";
 import { MAX_CARD_TEXT, findDuplicateGroups, isNamedPile, planMerge } from "@/lib/cafe/logic";
 import { useCafe, type Cafe } from "@/lib/cafe/room-store";
 import type { Card, Pile } from "@/lib/cafe/types";
-import { addCards } from "./CardSorting";
 import { ExportMenu, HowToPlay, SectionTitle } from "./shared";
 
 const PILE_COLORS: Record<string, string> = {

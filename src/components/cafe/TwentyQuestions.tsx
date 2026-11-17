@@ -12,6 +12,8 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { addCards } from "@/lib/cafe/cards";
+import { fireConfetti } from "@/lib/cafe/confetti";
 import { buildTqExport } from "@/lib/cafe/export";
 import { uuid } from "@/lib/cafe/identity";
 import {
@@ -33,8 +35,7 @@ import {
 } from "@/lib/cafe/logic";
 import { useCafe } from "@/lib/cafe/room-store";
 import type { Answer, Question, Round, Tag } from "@/lib/cafe/types";
-import { addCards } from "./CardSorting";
-import { ConfirmButton, ExportMenu, HowToPlay, SectionTitle, fireConfetti } from "./shared";
+import { ConfirmButton, ExportMenu, HowToPlay, SectionTitle } from "./shared";
 
 const ANSWERS: { value: Answer; label: string; className: string }[] = [
   { value: "yes", label: "Yes", className: "bg-emerald-600 hover:bg-emerald-700 text-white" },
