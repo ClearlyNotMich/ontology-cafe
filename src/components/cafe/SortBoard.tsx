@@ -249,7 +249,7 @@ export function SortBoard({
       </SectionTitle>
       <HowToPlay
         lines={[
-          "Drag cards into piles (long-press on phones); drop on empty board space to start a new pile.",
+          "Drag cards into piles (long-press on phones), or tap a card and pick “Move to”. Drop on empty board space to start a new pile.",
           "Name each pile (a new concept!) and say why its cards belong together.",
           "Link piles with a label like “is a” or “has ingredient”, and give a reason.",
         ]}
@@ -348,7 +348,18 @@ export function SortBoard({
       />
       <ActivityLog />
 
-      {editing && <CardDialog card={editing} onClose={() => setEditingId(null)} />}
+      {editing && (
+        <CardDialog
+          card={editing}
+          piles={sortedPiles}
+          onMove={(pileId) =>
+            void (pileId === "new"
+              ? actions.createPile(editing)
+              : actions.moveCard(editing, pileId))
+          }
+          onClose={() => setEditingId(null)}
+        />
+      )}
       {linkDraft?.open && (
         <LinkDialog
           initial={linkDraft}
@@ -634,7 +645,17 @@ function CardFace({
   );
 }
 
-function CardDialog({ card, onClose }: { card: Card; onClose: () => void }) {
+function CardDialog({
+  card,
+  piles,
+  onMove,
+  onClose,
+}: {
+  card: Card;
+  piles: Pile[];
+  onMove: (pileId: string | null) => void;
+  onClose: () => void;
+}) {
   const cafe = useCafe();
   const [text, setText] = useState(card.text);
   const [note, setNote] = useState(card.note);
@@ -652,7 +673,8 @@ function CardDialog({ card, onClose }: { card: Card; onClose: () => void }) {
   };
   return (
     <Dialog open onOpenChange={(o) => !o && onClose()}>
-      <DialogContent>
+      {/* No autofocus: on phones it pops the keyboard when you only want to move the card. */}
+      <DialogContent onOpenAutoFocus={(e) => e.preventDefault()}>
         <DialogHeader>
           <DialogTitle>Edit card</DialogTitle>
           <DialogDescription>Written by {authors.join(", ")}</DialogDescription>
@@ -676,6 +698,26 @@ function CardDialog({ card, onClose }: { card: Card; onClose: () => void }) {
               maxLength={500}
               onChange={(e) => setNote(e.target.value)}
             />
+          </div>
+          <div className="space-y-1">
+            <Label htmlFor="card-move">Move to</Label>
+            <select
+              id="card-move"
+              className="h-10 w-full rounded-md border bg-background px-2 text-base"
+              value={card.pile_id ?? ""}
+              onChange={(e) => {
+                onMove(e.target.value || null);
+                onClose();
+              }}
+            >
+              <option value="">Unsorted</option>
+              {piles.map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
+              <option value="new">+ New pile</option>
+            </select>
           </div>
         </div>
         <DialogFooter className="gap-2 sm:justify-between">
