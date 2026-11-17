@@ -10,7 +10,7 @@ import { MAX_CARD_TEXT, parseTermList } from "@/lib/cafe/logic";
 import { addCards } from "@/lib/cafe/cards";
 import { useCafe } from "@/lib/cafe/room-store";
 import type { Card } from "@/lib/cafe/types";
-import { ConfirmButton, ExportMenu, HowToPlay, SectionTitle } from "./shared";
+import { ConfirmButton, ExportMenu, HowToPlay, ImportCardsButton, SectionTitle } from "./shared";
 import { SortBoard } from "./SortBoard";
 
 export function CardSorting() {
@@ -185,9 +185,18 @@ function WritePhase({ resetActions }: { resetActions: React.ReactNode }) {
             </Button>
           </form>
           {paste === null ? (
-            <Button variant="ghost" size="sm" onClick={() => setPaste("")} disabled={me.confirmed}>
-              <ListPlus /> Paste a list
-            </Button>
+            <div className="flex flex-wrap gap-1">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setPaste("")}
+                disabled={me.confirmed}
+              >
+                <ListPlus /> Paste a list
+              </Button>
+              {/* Only my own cards: others' cards are private until the reveal. */}
+              <ImportCardsButton existing={mine.map((c) => c.text)} disabled={me.confirmed} />
+            </div>
           ) : (
             <div className="space-y-2">
               <Textarea

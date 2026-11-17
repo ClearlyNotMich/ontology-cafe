@@ -1,5 +1,14 @@
-import { ChevronDown, Copy, Download, FileJson, FileText, Pencil, RotateCcw } from "lucide-react";
-import { useState, type ReactNode } from "react";
+import {
+  ChevronDown,
+  Copy,
+  Download,
+  FileJson,
+  FileText,
+  FileUp,
+  Pencil,
+  RotateCcw,
+} from "lucide-react";
+import { useRef, useState, type ReactNode } from "react";
 import { toast } from "sonner";
 
 import {
@@ -14,7 +23,16 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -24,7 +42,9 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
+import { addCards } from "@/lib/cafe/cards";
 import type { ExportFile } from "@/lib/cafe/export";
+import { MAX_IMPORT, parseImport, planImport } from "@/lib/cafe/import";
 import { MAX_SCOPE, MAX_TOPIC } from "@/lib/cafe/logic";
 import { useCafe } from "@/lib/cafe/room-store";
 
@@ -73,6 +93,110 @@ export function ExportMenu({ build }: { build: () => ExportFile }) {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+  );
+}
+
+/** Loads a previous export (or plain list) as new Unsorted cards by me, after a preview. */
+export function ImportCardsButton({
+  existing,
+  disabled,
+}: {
+  existing: string[];
+  disabled?: boolean;
+}) {
+  const cafe = useCafe();
+  const fileRef = useRef<HTMLInputElement>(null);
+  const [preview, setPreview] = useState<{
+    found: number;
+    existing: number;
+    terms: string[];
+    picked: Set<string>;
+  } | null>(null);
+
+  const open = async (file: File) => {
+    const found = parseImport(await file.text());
+    if (!found.length) return void toast.error("No terms found in that file");
+    const plan = planImport(found, existing);
+    setPreview({ found: found.length, ...plan, picked: new Set(plan.terms) });
+  };
+
+  const confirm = () => {
+    if (!preview) return;
+    const terms = preview.terms.filter((t) => preview.picked.has(t));
+    setPreview(null);
+    if (!terms.length) return;
+    void addCards(cafe, terms).then(
+      (ok) => ok && cafe.log(`imported ${terms.length} card${terms.length === 1 ? "" : "s"}`),
+    );
+  };
+
+  return (
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        disabled={disabled}
+        onClick={() => fileRef.current?.click()}
+      >
+        <FileUp /> Import from export
+      </Button>
+      <input
+        ref={fileRef}
+        type="file"
+        accept=".json,.md,.markdown,.txt,application/json,text/markdown,text/plain"
+        className="hidden"
+        aria-label="Import file"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = "";
+          if (file) void open(file);
+        }}
+      />
+      <Dialog open={!!preview} onOpenChange={(o) => !o && setPreview(null)}>
+        {preview && (
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Import cards</DialogTitle>
+              <DialogDescription>
+                Found {preview.found} terms ({preview.existing} already in this room).
+                {preview.terms.length + preview.existing < preview.found &&
+                  ` Only the first ${MAX_IMPORT} new ones can be imported at once.`}
+              </DialogDescription>
+            </DialogHeader>
+            {preview.terms.length ? (
+              <ul className="max-h-80 space-y-1 overflow-y-auto">
+                {preview.terms.map((t) => (
+                  <li key={t}>
+                    <label className="flex items-center gap-2">
+                      <Checkbox
+                        checked={preview.picked.has(t)}
+                        onCheckedChange={(c) => {
+                          const picked = new Set(preview.picked);
+                          if (c === true) picked.add(t);
+                          else picked.delete(t);
+                          setPreview({ ...preview, picked });
+                        }}
+                      />
+                      {t}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-sm text-muted-foreground">Nothing new to import.</p>
+            )}
+            <DialogFooter>
+              <Button variant="ghost" onClick={() => setPreview(null)}>
+                Cancel
+              </Button>
+              <Button disabled={!preview.picked.size} onClick={confirm}>
+                Import {preview.picked.size} cards
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        )}
+      </Dialog>
+    </>
   );
 }
 

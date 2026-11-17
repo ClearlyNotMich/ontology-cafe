@@ -53,7 +53,7 @@ import { uuid } from "@/lib/cafe/identity";
 import { MAX_CARD_TEXT, findDuplicateGroups, isNamedPile, planMerge } from "@/lib/cafe/logic";
 import { useCafe, type Cafe } from "@/lib/cafe/room-store";
 import type { Card, Pile } from "@/lib/cafe/types";
-import { ExportMenu, HowToPlay, SectionTitle } from "./shared";
+import { ExportMenu, HowToPlay, ImportCardsButton, SectionTitle } from "./shared";
 
 const PILE_COLORS: Record<string, string> = {
   amber: "bg-amber-50 border-amber-300",
@@ -310,6 +310,9 @@ export function SortBoard({
                 <Plus />
               </Button>
             </form>
+            <ImportCardsButton
+              existing={[...cards.map((c) => c.text), ...piles.map((p) => p.name)]}
+            />
             <div className="flex max-h-72 flex-wrap content-start gap-2 overflow-y-auto lg:max-h-none lg:flex-1">
               {inPile(null).map((c) => (
                 <CardChip key={c.id} {...chipProps(c)} />
