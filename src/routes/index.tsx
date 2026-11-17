@@ -1,6 +1,6 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { Coffee, Loader2 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -52,7 +52,14 @@ function Index() {
   const [name, setName] = useState("");
   const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
-  useEffect(() => setName(getSavedName()), []);
+  // Buttons stay disabled until hydrated; before that a submit would be a plain page reload.
+  const [hydrated, setHydrated] = useState(false);
+  const nameRef = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    // Keep anything typed before hydration instead of wiping it.
+    setName(nameRef.current?.value || getSavedName());
+    setHydrated(true);
+  }, []);
 
   const create = async () => {
     const trimmed = name.trim().slice(0, 40);
@@ -89,6 +96,7 @@ function Index() {
         }}
       >
         <Input
+          ref={nameRef}
           aria-label="Your display name"
           placeholder="Your display name"
           value={name}
@@ -96,7 +104,12 @@ function Index() {
           onChange={(e) => setName(e.target.value)}
           className="h-11 text-base"
         />
-        <Button type="submit" size="lg" className="h-11 w-full text-base" disabled={busy}>
+        <Button
+          type="submit"
+          size="lg"
+          className="h-11 w-full text-base"
+          disabled={busy || !hydrated}
+        >
           {busy ? <Loader2 className="animate-spin" /> : <Coffee />} Create room
         </Button>
       </form>
@@ -116,7 +129,7 @@ function Index() {
           onChange={(e) => setCode(e.target.value)}
           className="h-11 text-base uppercase"
         />
-        <Button type="submit" variant="outline" className="h-11">
+        <Button type="submit" variant="outline" className="h-11" disabled={!hydrated}>
           Join
         </Button>
       </form>
