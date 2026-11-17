@@ -23,13 +23,13 @@ ways to get that knowledge out of people's heads:
 Ontology Café runs both methods as a live multiplayer game in the browser, so a group can do
 it in one sitting and take the results home as files.
 
-The name and café look are just the theme (the 20 Questions host is the *Barista*, guesses cost
-*beans*). Rooms work for any domain: animals, law, music, hospital logistics, whatever you are modelling.
+The name and café look are just the theme (the 20 Questions host is the _Barista_, guesses cost
+_beans_). Rooms work for any domain: animals, law, music, hospital logistics, whatever you are modelling.
 
 ## Running a session
 
 1. **Create a room.** Open the app, enter your name and, if you want, an **ontology topic**
-   (e.g. *Animals*) and a **scope & goal** (what is in, what is out, what the ontology is for). As
+   (e.g. _Animals_) and a **scope & goal** (what is in, what is out, what the ontology is for). As
    host you can edit both later. Everyone sees the change right away.
 
    ![Home page with name, topic and scope fields](docs/screenshots/home.png)
@@ -42,14 +42,14 @@ The name and café look are just the theme (the 20 Questions host is the *Barist
 4. **Reveal.** The cards flip open once everyone has confirmed. The host can also reveal early.
    Duplicates are flagged and can be merged, keeping every author.
 5. **Sort, name, link (together).** Drag cards into piles (long-press on phones, or tap a card and
-   pick *Move to*). Give each pile a name (a new concept) and a reason. Then **Link piles** with a
-   label such as *is a*, *part of*, *has property* or your own, plus a reason. You can add notes
+   pick _Move to_). Give each pile a name (a new concept) and a reason. Then **Link piles** with a
+   label such as _is a_, _part of_, _has property_ or your own, plus a reason. You can add notes
    to cards (e.g. "only if kept as a pet"). Every change is live for everyone, and an activity
    log shows who did what.
 6. **20 Questions.** On the second tab, the Barista secretly picks a concept (from your cards or
-   anything else). The detectives ask yes/no questions and the Barista answers *yes*, *no*,
-   *sometimes* or *out of scope*. Each answer and each wrong guess costs a bean, so early guesses
-   score more. Tag questions as *class* or *property*, and turn any question into a new card with one click.
+   anything else). The detectives ask yes/no questions and the Barista answers _yes_, _no_,
+   _sometimes_ or _out of scope_. Each answer and each wrong guess costs a bean, so early guesses
+   score more. Tag questions as _class_ or _property_, and turn any question into a new card with one click.
    After a few rounds the app merges all question paths into one **decision tree**.
 
    ![20 Questions: a finished round, leaderboard, question paths and the merged tree](docs/screenshots/twenty-questions.png)
@@ -63,14 +63,14 @@ The name and café look are just the theme (the 20 Questions host is the *Barist
 
 Every export starts with the room code, the **topic** and the **scope & goal**.
 
-| Card sorting | 20 Questions |
-| --- | --- |
-| Piles in order, with their name, a *new concept* flag and the reason | Every round: concept, Barista, result, winner |
-| The cards in each pile, with notes and authors | Every question in order, with answer, *class/property* tag and who asked |
-| All new concepts (the pile names) | Guesses, right and wrong |
-| Links: `from` **label** `to`, with the reason | The merged decision tree |
-| Unsorted cards | Terms suggested from questions |
-| An alphabetical list of all unique terms | The question path of each round |
+| Card sorting                                                         | 20 Questions                                                             |
+| -------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| Piles in order, with their name, a _new concept_ flag and the reason | Every round: concept, Barista, result, winner                            |
+| The cards in each pile, with notes and authors                       | Every question in order, with answer, _class/property_ tag and who asked |
+| All new concepts (the pile names)                                    | Guesses, right and wrong                                                 |
+| Links: `from` **label** `to`, with the reason                        | The merged decision tree                                                 |
+| Unsorted cards                                                       | Terms suggested from questions                                           |
+| An alphabetical list of all unique terms                             | The question path of each round                                          |
 
 Use the Markdown for reports and slides. Use the JSON for scripts.
 
@@ -80,13 +80,13 @@ A practical way to turn a session into a first OWL ontology:
 
 - **Pile names → classes.** Cards in a pile become subclasses or individuals of that class.
   Decide which one together. The card notes help.
-- **`is a` links → subclass axioms** (`Shark` *is a* `Fish` → `Shark ⊑ Fish`).
+- **`is a` links → subclass axioms** (`Shark` _is a_ `Fish` → `Shark ⊑ Fish`).
 - **Other links → object properties** (`part of`, `has property`, your own labels). The reasons
   tell you the domain and range.
-- **20 Questions → hierarchy and properties.** Questions tagged *class* near the root of the tree
-  are candidate top-level classes. Questions tagged *property* become properties (often data
-  properties, e.g. *eats meat*). *Sometimes* answers are a good place for a role or a defined class.
-  *Out of scope* answers help you write down the boundary of the scope.
+- **20 Questions → hierarchy and properties.** Questions tagged _class_ near the root of the tree
+  are candidate top-level classes. Questions tagged _property_ become properties (often data
+  properties, e.g. _eats meat_). _Sometimes_ answers are a good place for a role or a defined class.
+  _Out of scope_ answers help you write down the boundary of the scope.
 - **Unique terms** are a checklist: each term should end up as a class, property or individual,
   or be dropped on purpose.
 
