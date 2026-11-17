@@ -1,0 +1,2 @@
+grant select, insert, update, delete on public.rooms, public.players, public.piles, public.cards, public.links, public.events, public.tq_rounds, public.tq_questions to anon, authenticated;
+grant all on public.rooms, public.players, public.piles, public.cards, public.links, public.events, public.tq_rounds, public.tq_questions to service_role;

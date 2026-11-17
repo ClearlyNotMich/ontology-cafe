@@ -14,7 +14,374 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      cards: {
+        Row: {
+          author_id: string | null
+          co_author_ids: string[]
+          created_at: string
+          id: string
+          note: string
+          pile_id: string | null
+          position: number
+          room_id: string
+          text: string
+        }
+        Insert: {
+          author_id?: string | null
+          co_author_ids?: string[]
+          created_at?: string
+          id?: string
+          note?: string
+          pile_id?: string | null
+          position?: number
+          room_id: string
+          text: string
+        }
+        Update: {
+          author_id?: string | null
+          co_author_ids?: string[]
+          created_at?: string
+          id?: string
+          note?: string
+          pile_id?: string | null
+          position?: number
+          room_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "cards_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cards_pile_id_fkey"
+            columns: ["pile_id"]
+            isOneToOne: false
+            referencedRelation: "piles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "cards_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      events: {
+        Row: {
+          created_at: string
+          id: string
+          player_id: string | null
+          room_id: string
+          text: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          player_id?: string | null
+          room_id: string
+          text: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          player_id?: string | null
+          room_id?: string
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "events_player_id_fkey"
+            columns: ["player_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "events_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      links: {
+        Row: {
+          created_at: string
+          from_pile_id: string
+          id: string
+          label: string
+          reason: string
+          room_id: string
+          to_pile_id: string
+        }
+        Insert: {
+          created_at?: string
+          from_pile_id: string
+          id?: string
+          label: string
+          reason?: string
+          room_id: string
+          to_pile_id: string
+        }
+        Update: {
+          created_at?: string
+          from_pile_id?: string
+          id?: string
+          label?: string
+          reason?: string
+          room_id?: string
+          to_pile_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "links_from_pile_id_fkey"
+            columns: ["from_pile_id"]
+            isOneToOne: false
+            referencedRelation: "piles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "links_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "links_to_pile_id_fkey"
+            columns: ["to_pile_id"]
+            isOneToOne: false
+            referencedRelation: "piles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      piles: {
+        Row: {
+          collapsed: boolean
+          color: string
+          created_at: string
+          id: string
+          name: string
+          position: number
+          reason: string
+          room_id: string
+        }
+        Insert: {
+          collapsed?: boolean
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          position?: number
+          reason?: string
+          room_id: string
+        }
+        Update: {
+          collapsed?: boolean
+          color?: string
+          created_at?: string
+          id?: string
+          name?: string
+          position?: number
+          reason?: string
+          room_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "piles_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      players: {
+        Row: {
+          color: string
+          confirmed: boolean
+          created_at: string
+          id: string
+          name: string
+          room_id: string
+        }
+        Insert: {
+          color: string
+          confirmed?: boolean
+          created_at?: string
+          id: string
+          name: string
+          room_id: string
+        }
+        Update: {
+          color?: string
+          confirmed?: boolean
+          created_at?: string
+          id?: string
+          name?: string
+          room_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "players_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      rooms: {
+        Row: {
+          code: string
+          created_at: string
+          cs_phase: string
+          host_id: string | null
+          id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          cs_phase?: string
+          host_id?: string | null
+          id?: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          cs_phase?: string
+          host_id?: string | null
+          id?: string
+        }
+        Relationships: []
+      }
+      tq_questions: {
+        Row: {
+          answer: string | null
+          asker_id: string | null
+          correct: boolean | null
+          created_at: string
+          id: string
+          kind: string
+          room_id: string
+          round_id: string
+          tag: string | null
+          text: string
+        }
+        Insert: {
+          answer?: string | null
+          asker_id?: string | null
+          correct?: boolean | null
+          created_at?: string
+          id?: string
+          kind?: string
+          room_id: string
+          round_id: string
+          tag?: string | null
+          text: string
+        }
+        Update: {
+          answer?: string | null
+          asker_id?: string | null
+          correct?: boolean | null
+          created_at?: string
+          id?: string
+          kind?: string
+          room_id?: string
+          round_id?: string
+          tag?: string | null
+          text?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tq_questions_asker_id_fkey"
+            columns: ["asker_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tq_questions_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tq_questions_round_id_fkey"
+            columns: ["round_id"]
+            isOneToOne: false
+            referencedRelation: "tq_rounds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tq_rounds: {
+        Row: {
+          barista_id: string | null
+          concept: string | null
+          created_at: string
+          ended_at: string | null
+          id: string
+          number: number
+          room_id: string
+          status: string
+          winner_id: string | null
+        }
+        Insert: {
+          barista_id?: string | null
+          concept?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          number: number
+          room_id: string
+          status?: string
+          winner_id?: string | null
+        }
+        Update: {
+          barista_id?: string | null
+          concept?: string | null
+          created_at?: string
+          ended_at?: string | null
+          id?: string
+          number?: number
+          room_id?: string
+          status?: string
+          winner_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "tq_rounds_barista_id_fkey"
+            columns: ["barista_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tq_rounds_room_id_fkey"
+            columns: ["room_id"]
+            isOneToOne: false
+            referencedRelation: "rooms"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "tq_rounds_winner_id_fkey"
+            columns: ["winner_id"]
+            isOneToOne: false
+            referencedRelation: "players"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

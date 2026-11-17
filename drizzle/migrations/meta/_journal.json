@@ -1,0 +1,20 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1794927401249,
+      "tag": "0000_ontology_cafe_schema",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1794927416987,
+      "tag": "0001_ontology_cafe_grants",
+      "breakpoints": true
+    }
+  ]
+}
